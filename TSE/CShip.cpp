@@ -55,6 +55,7 @@ const DWORD MAX_DISRUPT_TIME_BEFORE_DAMAGE =	(60 * g_TicksPerSecond);
 #define PROPERTY_CARGO_SPACE					CONSTLIT("cargoSpace")
 #define PROPERTY_CARGO_SPACE_FREE_KG			CONSTLIT("cargoSpaceFreeKg")
 #define PROPERTY_CARGO_SPACE_USED_KG			CONSTLIT("cargoSpaceUsedKg")
+#define PROPERTY_COUNTER_VALUE					CONSTLIT("counterValue")
 #define PROPERTY_CHARACTER						CONSTLIT("character")
 #define PROPERTY_DEVICE_DAMAGE_IMMUNE			CONSTLIT("deviceDamageImmune")
 #define PROPERTY_DEVICE_DISRUPT_IMMUNE			CONSTLIT("deviceDisruptImmune")
@@ -3061,6 +3062,9 @@ ICCItem *CShip::GetProperty (CCodeChainCtx &Ctx, const CString &sName)
 		OnComponentChanged(comCargo);
 		return CC.CreateInteger(mathRound(GetCargoMass() * 1000.0));
 		}
+
+	else if (strEquals(sName, PROPERTY_COUNTER_VALUE))
+		return CC.CreateInteger(GetCounterValue());
 
 	else if (strEquals(sName, PROPERTY_CHARACTER))
 		return (m_pCharacter ? CC.CreateInteger(m_pCharacter->GetUNID()) : CC.CreateNil());
@@ -7601,6 +7605,11 @@ bool CShip::SetProperty (const CString &sName, ICCItem *pValue, CString *retsErr
 	if (strEquals(sName, PROPERTY_ALWAYS_LEAVE_WRECK))
 		{
 		m_fAlwaysLeaveWreck = !pValue->IsNil();
+		return true;
+		}
+	else if (strEquals(sName, PROPERTY_COUNTER_VALUE))
+		{
+		SetCounterValue(pValue->GetIntegerValue());
 		return true;
 		}
 	else if (strEquals(sName, PROPERTY_CHARACTER))
