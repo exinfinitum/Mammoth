@@ -1093,6 +1093,7 @@ class CShip : public CSpaceObject
 		virtual CDesignType *GetCharacter (void) const override { return m_pCharacter; }
 		virtual DWORD GetClassUNID (void) override { return m_pClass->GetUNID(); }
 		virtual int GetCombatPower (void) override;
+		virtual int GetCounterValue(void) override { return m_iCounterValue; }
 		virtual CCurrencyBlock *GetCurrencyBlock (bool bCreate = false) override;
 		virtual int GetCyberDefenseLevel (void) override { return m_pClass->GetCyberDefenseLevel(); }
 		virtual int GetDamageEffectiveness (CSpaceObject *pAttacker, CInstalledDevice *pWeapon) override;
@@ -1198,6 +1199,7 @@ class CShip : public CSpaceObject
 		virtual bool SetAbility (Abilities iAbility, AbilityModifications iModification, int iDuration, DWORD dwOptions) override;
 		virtual int SetAISettingInteger (const CString &sSetting, int iValue) override { return m_pController->SetAISettingInteger(sSetting, iValue); }
 		virtual CString SetAISettingString (const CString &sSetting, const CString &sValue) override { return m_pController->SetAISettingString(sSetting, sValue); }
+		virtual void SetCounterValue(int iCounterValue) override { m_iCounterValue = iCounterValue; }
 		virtual void SetFireDelay (CInstalledDevice *pWeapon, int iDelay = -1) override;
 		virtual void SetIdentified (bool bIdentified = true) override { m_fIdentified = bIdentified; }
         virtual void SetKnown (bool bKnown = true) override { m_fKnown = bKnown; }
@@ -1318,6 +1320,7 @@ class CShip : public CSpaceObject
 		mutable Metric m_rItemMass;				//	Total mass of all items (including installed)
 		mutable Metric m_rCargoMass;			//	Mass of cargo items (not including installed)
 		int m_iStealth;							//	Computed stealth
+		int m_iCounterValue;						//	Heat/capacitor counter value
 
 		CSpaceObject *m_pDocked;				//	If not NULL, object we are docked to.
 		CSpaceObject *m_pExitGate;				//	If not NULL, gate we are about to exit.

@@ -5327,6 +5327,8 @@ void CShip::OnReadFromStream (SLoadCtx &Ctx)
 //
 //	DWORD		Controlled ObjID
 //	Controller Data
+//
+//	DWORD		m_iCounterValue
 
 	{
 #ifdef DEBUG_LOAD
@@ -5721,6 +5723,11 @@ void CShip::OnReadFromStream (SLoadCtx &Ctx)
 		}
 
 	m_pController->ReadFromStream(Ctx, this);
+
+	if (Ctx.dwVersion >= 160)
+		Ctx.pStream->Read((char *)&m_iCounterValue, sizeof(DWORD));
+	else
+		m_iCounterValue = 0;
 
     //  Recompute performance (because we don't save it).
 
@@ -6390,6 +6397,8 @@ void CShip::OnWriteToStream (IWriteStream *pStream)
 //
 //	DWORD		Controller ObjID
 //	Controller Data
+//
+//	DWORD		m_iCounterValue
 
 	{
 	DWORD dwSave;
@@ -6530,6 +6539,10 @@ void CShip::OnWriteToStream (IWriteStream *pStream)
 		dwSave = 0;
 		pStream->Write((char *)&dwSave, sizeof(DWORD));
 		}
+
+	//  Heat counter
+
+	pStream->Write((char *)&m_iCounterValue, sizeof(DWORD));
 	}
 
 bool CShip::OrientationChanged (void)

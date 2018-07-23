@@ -1385,6 +1385,7 @@ class CSpaceObject : public CObject
 		virtual CurrencyValue GetBalancedTreasure (void) const { return 0; }
 		virtual Metric GetCargoSpaceLeft (void) { return 1000000.0; }
 		virtual int GetCombatPower (void) { return 0; }
+		virtual int GetCounterValue(void) { return NULL; }
 		virtual int GetCyberDefenseLevel (void) { return GetLevel(); }
 		virtual int GetDamageEffectiveness (CSpaceObject *pAttacker, CInstalledDevice *pWeapon) { return 0; }
 		virtual DamageTypes GetDamageType (void) { return damageGeneric; }
@@ -1433,6 +1434,7 @@ class CSpaceObject : public CObject
 		virtual void SendMessage (CSpaceObject *pSender, const CString &sMsg) { }
 		virtual int SetAISettingInteger (const CString &sSetting, int iValue) { return 0; }
 		virtual CString SetAISettingString (const CString &sSetting, const CString &sValue) { return NULL_STR; }
+		virtual void SetCounterValue(int iCounterValue) { }
 		virtual void SetIdentified (bool bIdentified = true) { }
 		virtual void SetMapLabelPos (int x, int y) { }
 		virtual void UpdateArmorItems (void) { }
