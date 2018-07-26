@@ -1144,6 +1144,7 @@ class CShip : public CSpaceObject
 		virtual void GetVisibleDamageDesc (SVisibleDamage &Damage) override;
 		virtual bool HasAttribute (const CString &sAttribute) const override;
 		virtual bool ImageInObject (const CVector &vObjPos, const CObjectImageArray &Image, int iTick, int iRotation, const CVector &vImagePos) override;
+		virtual void IncCounterValue(int iCounterValue) override { m_iCounterValue += iCounterValue; }
 		virtual bool IsAnchored (void) const override { return (GetDockedObj() != NULL) || IsManuallyAnchored(); }
 		virtual bool IsAngryAt (CSpaceObject *pObj) const override;
 		virtual bool IsAttached (void) const override { return m_fShipCompartment; }

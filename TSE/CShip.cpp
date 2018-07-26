@@ -32,10 +32,12 @@ const Metric MAX_SPEED_FOR_DOCKING2 =			(0.04 * 0.04 * LIGHT_SPEED * LIGHT_SPEED
 const DWORD MAX_DISRUPT_TIME_BEFORE_DAMAGE =	(60 * g_TicksPerSecond);
 
 #define FIELD_CARGO_SPACE						CONSTLIT("cargoSpace")
+#define FIELD_COUNTER_INCREMENT_RATE			CONSTLIT("counterIncrementRate")
 #define FIELD_LAUNCHER							CONSTLIT("launcher")
 #define FIELD_LAUNCHER_UNID						CONSTLIT("launcherUNID")
 #define FIELD_MAX_SPEED							CONSTLIT("maxSpeed")
 #define FIELD_MANEUVER							CONSTLIT("maneuver")
+#define FIELD_MAX_COUNTER						CONSTLIT("maxCounter")
 #define FIELD_NAME								CONSTLIT("name")
 #define FIELD_PRIMARY_ARMOR						CONSTLIT("primaryArmor")
 #define FIELD_PRIMARY_ARMOR_UNID				CONSTLIT("primaryArmorUNID")
@@ -56,6 +58,7 @@ const DWORD MAX_DISRUPT_TIME_BEFORE_DAMAGE =	(60 * g_TicksPerSecond);
 #define PROPERTY_CARGO_SPACE_FREE_KG			CONSTLIT("cargoSpaceFreeKg")
 #define PROPERTY_CARGO_SPACE_USED_KG			CONSTLIT("cargoSpaceUsedKg")
 #define PROPERTY_COUNTER_VALUE					CONSTLIT("counterValue")
+#define PROPERTY_COUNTER_VALUE_INCREMENT		CONSTLIT("counterValueIncrement")
 #define PROPERTY_CHARACTER						CONSTLIT("character")
 #define PROPERTY_DEVICE_DAMAGE_IMMUNE			CONSTLIT("deviceDamageImmune")
 #define PROPERTY_DEVICE_DISRUPT_IMMUNE			CONSTLIT("deviceDisruptImmune")
@@ -6340,6 +6343,8 @@ void CShip::OnUpdate (SUpdateCtx &Ctx, Metric rSecondsPerTick)
 	if (m_iMissileFireDelay > 0)
 		m_iMissileFireDelay--;
 
+	m_iCounterValue = Min(Max(0, m_iCounterValue + (m_pClass->GetHullDesc().GetCounterIncrementRate())), m_pClass->GetHullDesc().GetMaxCounter());
+
 	DEBUG_CATCH
 	}
 
@@ -7610,6 +7615,11 @@ bool CShip::SetProperty (const CString &sName, ICCItem *pValue, CString *retsErr
 	else if (strEquals(sName, PROPERTY_COUNTER_VALUE))
 		{
 		SetCounterValue(pValue->GetIntegerValue());
+		return true;
+		}
+	else if (strEquals(sName, PROPERTY_COUNTER_VALUE_INCREMENT))
+		{
+		IncCounterValue(pValue->GetIntegerValue());
 		return true;
 		}
 	else if (strEquals(sName, PROPERTY_CHARACTER))

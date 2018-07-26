@@ -1411,6 +1411,7 @@ class CSpaceObject : public CObject
 		virtual int GetVisibleDamage (void) { return 0; }
 		virtual void GetVisibleDamageDesc (SVisibleDamage &Damage) { Damage = SVisibleDamage(); }
 		virtual bool HasMapLabel (void) { return false; }
+		virtual void IncCounterValue(int iCounterValue) { }
 		virtual bool IsAngry (void) { return false; }
 		virtual bool IsAngryAt (CSpaceObject *pObj) const { return IsEnemy(pObj); }
 		virtual bool IsIdentified (void) { return true; }
