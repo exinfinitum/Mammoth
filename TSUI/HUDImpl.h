@@ -289,6 +289,7 @@ class CReactorHUDCircular : public IHUDPainter
 
 	private:
 		void PaintChargesGauge (const SReactorStats &Stats);
+		void PaintCounterGauge(CShip * pShip);
 		void PaintFuelGauge (const SReactorStats &Stats);
 		void PaintPowerGauge (const SReactorStats &Stats);
 		void PaintReactorItem (const SReactorStats &Stats);

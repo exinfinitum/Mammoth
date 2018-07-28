@@ -1386,6 +1386,7 @@ class CSpaceObject : public CObject
 		virtual Metric GetCargoSpaceLeft (void) { return 1000000.0; }
 		virtual int GetCombatPower (void) { return 0; }
 		virtual int GetCounterValue(void) { return NULL; }
+		virtual int GetCounterIncrementValue(void) { return NULL; }
 		virtual int GetCyberDefenseLevel (void) { return GetLevel(); }
 		virtual int GetDamageEffectiveness (CSpaceObject *pAttacker, CInstalledDevice *pWeapon) { return 0; }
 		virtual DamageTypes GetDamageType (void) { return damageGeneric; }

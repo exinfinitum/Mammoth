@@ -170,6 +170,69 @@ void CReactorHUDCircular::PaintChargesGauge (const SReactorStats &Stats)
 		}
 	}
 
+void CReactorHUDCircular::PaintCounterGauge(CShip *pShip)
+
+//	PaintCounterGauge
+//
+//	Paints the heat/energy gauge
+
+{
+	const CVisualPalette &VI = g_pHI->GetVisuals();
+	const CG16bitFont &SmallFont = VI.GetFont(fontSmall);
+	const CG16bitFont &MediumFont = VI.GetFont(fontMedium);
+
+	//	Calculate fuel values
+
+	Metric rCounterValue = ((Metric)pShip->GetCounterValue() / (Metric)pShip->GetMaxCounterValue());
+	bool rCounterIsHeat = (pShip->GetCounterIncrementValue() < 0 ? true : false);
+
+	//	Paint the background
+
+	CGDraw::Arc(m_Buffer,
+		CVector(m_xCenter, m_yCenter),
+		m_iGaugeRadius + RING_SPACING + m_iGaugeWidth,
+		0.5 * PI,
+		1.5 * PI,
+		m_iGaugeWidth,
+		m_rgbGaugeBack,
+		CGDraw::blendCompositeNormal,
+		(m_iGaugeWidth + RING_SPACING) / 2,
+		CGDraw::ARC_INNER_RADIUS);
+
+	//	Figure out how we should paint
+
+	CG32bitPixel rgbColor = rCounterIsHeat ? CG32bitPixel((BYTE)(rCounterValue * 255), 64, (BYTE)(255 - (rCounterValue * 255)))
+		: CG32bitPixel((BYTE)(rCounterValue * 64), (BYTE)(rCounterValue * 64) + 64, (BYTE)(rCounterValue * 127) + 127);
+
+	CGDraw::Arc(m_Buffer,
+		CVector(m_xCenter, m_yCenter),
+		m_iGaugeRadius + RING_SPACING + m_iGaugeWidth,
+		0.5 * PI - (PI * rCounterValue),
+		1.5 * PI,
+		m_iGaugeWidth,
+		rgbColor,
+		CGDraw::blendCompositeNormal,
+		(m_iGaugeWidth + RING_SPACING) / 2,
+		CGDraw::ARC_INNER_RADIUS);
+
+	//	Paint the fuel percent
+
+	int cxWidth = MediumFont.MeasureText(CONSTLIT("100%")) + 4 * RING_SPACING;
+	int cyHeight = MediumFont.GetHeight() + SmallFont.GetHeight();
+	CVector vInnerPos = CVector::FromPolarInv(mathDegreesToRadians(210), m_iGaugeRadius + RING_SPACING + m_iGaugeWidth + RING_SPACING + m_iGaugeWidth + RING_SPACING);
+	CVector vOuterPos = vInnerPos - CVector(cxWidth, 0.0);
+
+	CGDraw::ArcQuadrilateral(m_Buffer, CVector(m_xCenter, m_yCenter), vInnerPos, vOuterPos, cyHeight, m_rgbGaugeBack, CGDraw::blendCompositeNormal);
+
+	int xText = m_xCenter + (int)vInnerPos.GetX() - 3 * RING_SPACING;
+	int yText = m_yCenter + (int)vInnerPos.GetY() + (cyHeight / 2);
+	SmallFont.DrawText(m_Buffer, xText, yText, VI.GetColor(colorTextDialogLabel), rCounterIsHeat ? CONSTLIT("Heat") : CONSTLIT("Energy"), CG16bitFont::AlignRight);
+	yText += SmallFont.GetHeight();
+
+	MediumFont.DrawText(m_Buffer, xText, yText, VI.GetColor(colorTextHighlight), strPatternSubst(CONSTLIT("%d%%"), (int)((100.0 * rCounterValue) + 0.5)), CG16bitFont::AlignRight);
+}
+
+
 void CReactorHUDCircular::PaintFuelGauge (const SReactorStats &Stats)
 
 //	PaintFuelGauge
@@ -223,7 +286,7 @@ void CReactorHUDCircular::PaintFuelGauge (const SReactorStats &Stats)
 
 	int cxWidth = MediumFont.MeasureText(CONSTLIT("100%")) + 4 * RING_SPACING;
 	int cyHeight = MediumFont.GetHeight() + SmallFont.GetHeight();
-	CVector vInnerPos = CVector::FromPolarInv(mathDegreesToRadians(150), m_iGaugeRadius + RING_SPACING + m_iGaugeWidth + RING_SPACING);
+	CVector vInnerPos = CVector::FromPolarInv(mathDegreesToRadians(150), m_iGaugeRadius + RING_SPACING + m_iGaugeWidth + RING_SPACING + m_iGaugeWidth + RING_SPACING);
 	CVector vOuterPos = vInnerPos - CVector(cxWidth, 0.0);
 
 	CGDraw::ArcQuadrilateral(m_Buffer, CVector(m_xCenter, m_yCenter), vInnerPos, vOuterPos, cyHeight, m_rgbGaugeBack, CGDraw::blendCompositeNormal);
@@ -459,4 +522,9 @@ void CReactorHUDCircular::Realize (SHUDPaintCtx &Ctx)
 	else
 		PaintFuelGauge(Stats);
 	PaintPowerGauge(Stats);
+
+	if (pShip->GetMaxCounterValue() > 0)
+		{
+		PaintCounterGauge(pShip);
+		}
 	}
