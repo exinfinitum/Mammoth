@@ -790,6 +790,7 @@ class CWeaponClass : public CDeviceClass
 		int m_iFailureChance;					//	Chance of failure
 
 		bool m_bContinuousConsumePerShot;		//	If a continuous weapon, consume ammunition for every shot in burst
+		int m_iCounterPerShot;					//	How much to increment the ship's counter by per shot
 		bool m_bOmnidirectional;				//	Omnidirectional
 		bool m_bMIRV;							//	Each shot seeks an independent target
 		bool m_bReportAmmo;						//	Report count of ammo shot even if not a launcher

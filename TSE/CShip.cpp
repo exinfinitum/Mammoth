@@ -6343,7 +6343,19 @@ void CShip::OnUpdate (SUpdateCtx &Ctx, Metric rSecondsPerTick)
 	if (m_iMissileFireDelay > 0)
 		m_iMissileFireDelay--;
 
-	m_iCounterValue = Min(Max(0, m_iCounterValue + (m_pClass->GetHullDesc().GetCounterIncrementRate())), m_pClass->GetHullDesc().GetMaxCounter());
+	int iCounterIncRate = m_pClass->GetHullDesc().GetCounterIncrementRate();
+	if (iCounterIncRate > 0)
+		{
+		//  If counter increment rate is greater than zero, then we allow the counter value to be unbounded below
+		//  but bounded above
+		m_iCounterValue = Min(m_iCounterValue + (iCounterIncRate), m_pClass->GetHullDesc().GetMaxCounter());
+		}
+	else
+		{
+		//  Else we allow the counter value to be unbounded above
+		//  but bounded below
+		m_iCounterValue = Max(0, m_iCounterValue + (iCounterIncRate));
+		}
 
 	DEBUG_CATCH
 	}

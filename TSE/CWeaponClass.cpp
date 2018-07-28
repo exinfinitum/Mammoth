@@ -37,6 +37,7 @@
 #define POWER_USE_ATTRIB						CONSTLIT("powerUse")
 #define RECOIL_ATTRIB							CONSTLIT("recoil")
 #define REPORT_AMMO_ATTRIB						CONSTLIT("reportAmmo")
+#define SHIP_COUNTER_PER_SHOT_ATTRIB			CONSTLIT("shipCounterPerShot")
 #define TARGET_STATIONS_ONLY_ATTRIB				CONSTLIT("targetStationsOnly")
 #define TYPE_ATTRIB								CONSTLIT("type")
 
@@ -96,6 +97,7 @@
 #define PROPERTY_OMNIDIRECTIONAL				CONSTLIT("omnidirectional")
 #define PROPERTY_REPEATING						CONSTLIT("repeating")
 #define PROPERTY_SECONDARY						CONSTLIT("secondary")
+#define PROPERTY_SHIP_COUNTER_PER_SHOT			CONSTLIT("shipCounterPerShot")
 #define PROPERTY_STD_COST						CONSTLIT("stdCost")
 #define PROPERTY_TRACKING						CONSTLIT("tracking")
 
@@ -1453,6 +1455,30 @@ bool CWeaponClass::ConsumeCapacitor (CItemCtx &ItemCtx, CWeaponFireDesc *pShot)
 	if (pDevice == NULL)
 		return false;
 
+	//  TODO: Spin this off into its own function.
+	//  If we update the ship's counter, make sure that after increase/decrease we're
+	//  below/above the maximum/minimum counter, respectively.
+
+	if (m_iCounterPerShot > 0)
+		{
+		if (pSource->GetCounterValue() + m_iCounterPerShot > pSource->GetMaxCounterValue())
+			{
+			return false;
+			}
+		}
+	else if (m_iCounterPerShot < 0)
+		{
+		if (pSource->GetCounterValue() + m_iCounterPerShot < 0)
+			{
+			return false;
+			}
+		}
+
+	if (m_iCounterPerShot != 0)
+		{
+		pSource->IncCounterValue(m_iCounterPerShot);
+		}
+
 	//	If we don't have enough capacitor power, then we can't fire
 
 	if (pDevice->GetTemperature() < m_iCounterActivate)
@@ -1501,6 +1527,7 @@ ALERROR CWeaponClass::CreateFromXML (SDesignLoadCtx &Ctx, CXMLElement *pDesc, CI
 	pWeapon->m_bReportAmmo = pDesc->GetAttributeBool(REPORT_AMMO_ATTRIB);
 	pWeapon->m_bTargetStationsOnly = pDesc->GetAttributeBool(TARGET_STATIONS_ONLY_ATTRIB);
 	pWeapon->m_bContinuousConsumePerShot = pDesc->GetAttributeBool(CONTINUOUS_CONSUME_PERSHOT_ATTRIB);
+	pWeapon->m_iCounterPerShot = pDesc->GetAttributeIntegerBounded(SHIP_COUNTER_PER_SHOT_ATTRIB, 0, -1, 0);
 
 
 	//	Configuration
@@ -2550,6 +2577,10 @@ ICCItem *CWeaponClass::FindAmmoItemProperty (CItemCtx &Ctx, const CItem &Ammo, c
 		{ 
 		CWeaponFireDesc *pShot = GetWeaponFireDesc(Ctx);
 		return CC.CreateInteger(pShot->GetContinuous());
+		}
+	else if (strEquals(sProperty, PROPERTY_SHIP_COUNTER_PER_SHOT))
+		{
+		return CC.CreateInteger(m_iCounterPerShot);
 		}
     else if (strEquals(sProperty, PROPERTY_STD_COST))
         {
