@@ -1455,30 +1455,6 @@ bool CWeaponClass::ConsumeCapacitor (CItemCtx &ItemCtx, CWeaponFireDesc *pShot)
 	if (pDevice == NULL)
 		return false;
 
-	//  TODO: Spin this off into its own function.
-	//  If we update the ship's counter, make sure that after increase/decrease we're
-	//  below/above the maximum/minimum counter, respectively.
-
-	if (m_iCounterPerShot > 0)
-		{
-		if (pSource->GetCounterValue() + m_iCounterPerShot > pSource->GetMaxCounterValue())
-			{
-			return false;
-			}
-		}
-	else if (m_iCounterPerShot < 0)
-		{
-		if (pSource->GetCounterValue() + m_iCounterPerShot < 0)
-			{
-			return false;
-			}
-		}
-
-	if (m_iCounterPerShot != 0)
-		{
-		pSource->IncCounterValue(m_iCounterPerShot);
-		}
-
 	//	If we don't have enough capacitor power, then we can't fire
 
 	if (pDevice->GetTemperature() < m_iCounterActivate)
@@ -1990,6 +1966,14 @@ bool CWeaponClass::FireWeapon (CInstalledDevice *pDevice,
 			//	We return TRUE because we always consume energy, regardless of
 			//	outcome.
 			return true;
+		}
+
+	//  Update the ship energy/heat counter.
+
+	if (m_iCounterPerShot != 0)
+		{
+		if (!UpdateShipCounter(ItemCtx, pShot))
+			return false;
 		}
 
 	//	If we're damaged, disabled, or badly designed, we have a chance of 
@@ -4585,6 +4569,45 @@ void CWeaponClass::Update (CInstalledDevice *pDevice, CSpaceObject *pSource, SDe
 
 	DEBUG_CATCH
 	}
+
+bool CWeaponClass::UpdateShipCounter(CItemCtx &ItemCtx, CWeaponFireDesc *pShot)
+
+//	UpdateShipCounter
+//
+//	If ship counter is within bounds, we update it and return TRUE. Otherwise,
+//	we return FALSE.
+
+{
+	//	Get source and device
+
+	CSpaceObject *pSource = ItemCtx.GetSource();
+	if (pSource == NULL)
+		return false;
+
+	CInstalledDevice *pDevice = ItemCtx.GetDevice();
+	if (pDevice == NULL)
+		return false;
+
+	//  If we update the ship's counter, make sure that after increase/decrease we're
+	//  below/above the maximum/minimum counter, respectively.
+
+	if (m_iCounterPerShot > 0)
+	{
+		if (pSource->GetCounterValue() + m_iCounterPerShot > pSource->GetMaxCounterValue())
+		{
+			return false;
+		}
+	}
+	else if (m_iCounterPerShot < 0)
+	{
+		if (pSource->GetCounterValue() + m_iCounterPerShot < 0)
+		{
+			return false;
+		}
+	}
+	pSource->IncCounterValue(m_iCounterPerShot);
+	return true;
+}
 
 bool CWeaponClass::UpdateTemperature (CItemCtx &ItemCtx, CWeaponFireDesc *pShot, CFailureDesc::EFailureTypes *retiFailureMode, bool *retbSourceDestroyed)
 

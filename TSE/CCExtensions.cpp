@@ -2212,6 +2212,7 @@ static PRIMITIVEPROCDEF g_Extensions[] =
 
 			"   'alwaysLeaveWreck True|Nil\n"
 			"   'counterValue value\n"
+			"   'counterValueIncrement value\n"
 			"   'dockingEnabled True|Nil\n"
 			"   'commsKey key\n"
 			"   'known True|Nil\n"

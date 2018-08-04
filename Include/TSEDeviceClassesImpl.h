@@ -772,6 +772,7 @@ class CWeaponClass : public CDeviceClass
 		bool IsOmniDirectional (CInstalledDevice *pDevice);
 		inline bool IsTemperatureEnabled (void) { return (m_Counter == cntTemperature); }
 		bool IsTracking (CItemCtx &ItemCtx, CWeaponFireDesc *pShot) const;
+		bool UpdateShipCounter(CItemCtx &ItemCtx, CWeaponFireDesc *pShot);
 		bool UpdateTemperature (CItemCtx &ItemCtx, CWeaponFireDesc *pShot, CFailureDesc::EFailureTypes *retiFailureMode, bool *retbSourceDestroyed);
 		inline bool UsesAmmo (void) const { return (m_ShotData.GetCount() > 0 && m_ShotData[0].pDesc->GetAmmoType() != NULL); }
 		bool VariantIsValid (CSpaceObject *pSource, CInstalledDevice *pDevice, CWeaponFireDesc &ShotData);
