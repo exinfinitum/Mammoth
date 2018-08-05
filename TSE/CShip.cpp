@@ -1532,6 +1532,7 @@ ALERROR CShip::CreateFromClass (CSystem *pSystem,
 	pShip->m_pMoney = NULL;
 	pShip->m_pPowerUse = NULL;
 	pShip->m_pCharacter = pClass->GetCharacter();
+	pShip->m_iCounterValue = 0;
 
 	pShip->m_fTrackMass = false;
 	pShip->m_fRadioactive = false;
