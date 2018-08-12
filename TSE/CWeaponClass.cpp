@@ -1944,12 +1944,6 @@ bool CWeaponClass::FireWeapon (CInstalledDevice *pDevice,
 
 	CFailureDesc::EFailureTypes iFailureMode = CFailureDesc::failNone;
 
-	//	See if we have enough ammo/charges to proceed. If we don't then we 
-	//	cannot continue.
-
-	if (!ConsumeAmmo(ItemCtx, pShot, iRepeatingCount, retbConsumedItems))
-		return false;
-
 	//	Update capacitor counters
 
 	if (m_Counter == cntCapacitor)
@@ -1975,6 +1969,12 @@ bool CWeaponClass::FireWeapon (CInstalledDevice *pDevice,
 		if (!UpdateShipCounter(ItemCtx, pShot))
 			return false;
 		}
+	
+	//	See if we have enough ammo/charges to proceed. If we don't then we 
+	//	cannot continue.
+
+	if (!ConsumeAmmo(ItemCtx, pShot, iRepeatingCount, retbConsumedItems))
+		return false;
 
 	//	If we're damaged, disabled, or badly designed, we have a chance of 
 	//	failure.
